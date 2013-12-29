@@ -99,6 +99,7 @@
 		this.container = null;
 		this.lines = [];
 		this.prompt = null;
+		this.listeners = {};
 
 		if (!('prompt' in options) || options.prompt) {
 			var prompt = createElement('span', 'prompt');
@@ -199,6 +200,22 @@
 
 		stop: function() {
 			this._stop && this._stop();
+		},
+
+		on: function(event, listener) {
+			if (!this.listeners[event]) {
+				this.listeners[event] = [];
+			}
+
+			this.listeners[event].push(listener);
+		},
+
+		emit: function(event) {
+			var listeners = this.listeners[event] || [],
+				args = [].slice.call(arguments, 1);
+			for (var i = 0; i < listeners.length; i++) {
+				listeners[i].apply(this, args);
+			}
 		}
 	};
 

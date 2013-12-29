@@ -92,17 +92,17 @@
 	}
 
 	function Console(element, options) {
+		options = options || {};
 		this.el = typeof(element) === 'string' ? document.getElementById(element) : element;
-		this.options = options || {};
 		this.cursor = new Cursor(this);
 		this._stop = null;
 		this.container = null;
 		this.lines = [];
-		this.prompt = this.options.prompt || '$ ';
+		this.prompt = null;
 
-		if (this.prompt) {
+		if (!('prompt' in options) || options.prompt) {
 			var prompt = createElement('span', 'prompt');
-			prompt.appendChild(document.createTextNode(this.prompt));
+			prompt.appendChild(document.createTextNode(options.prompt || '$ '));
 			this.prompt = prompt;
 		}
 

@@ -105,6 +105,7 @@
 			prompt.appendChild(document.createTextNode(this.prompt));
 			this.prompt = prompt;
 		}
+
 		this.render();
 	}
 
@@ -116,10 +117,6 @@
 		},
 
 		write: function(text) {
-			if (!text) {
-				return;
-			}
-
 			for (var i = 0; i < text.length; i++) {
 				this.cursor.writeChar(text.charAt(i));
 			}

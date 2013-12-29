@@ -1,0 +1,19 @@
+{
+	"name": "jsconsole",
+	"version": "0.0.1",
+	"private": true,
+
+	"author": "Tommy Montgomery <tmont@tmont.com> (http://tmont.com/)",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tmont/jsconsole.git"
+	},
+
+	"devDependencies": {
+		"serve": "*"
+	},
+
+	"scripts": {
+		"start": "./node_modules/.bin/serve -p 6666 ."
+	}
+}

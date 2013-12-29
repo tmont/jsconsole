@@ -1,0 +1,49 @@
+@import "lesshat";
+
+@opera: false;
+@ms: false;
+
+.jsconsole-container {
+	@font-size: 16px;
+	@line-height: 1.5em;
+	@cursor-color: #80cd7c;
+	@prompt-color: #909ccd;
+	@console-bg-color: #161616;
+	@console-fg-color: ivory;
+
+	line-height: @line-height;
+	font-family: Consolas, monospace;
+	.background-image(linear-gradient(
+		to bottom,
+		lighten(fade(@console-bg-color, 90), 10%),
+		darken(fade(@console-bg-color, 90), 10%))
+	);
+	color: @console-fg-color;
+	font-size: @font-size;
+	white-space: pre-wrap;
+	width: 100%;
+	min-height: 400px;
+	border: 2px solid fade(lighten(@console-bg-color, 30%), 75);
+	overflow-y: scroll;
+	box-shadow: 3px 3px 5px fade(black, 50);
+	border-radius: 3px;
+	padding: 5px;
+
+	.jsconsole-line {
+		position: relative;
+		min-height: 1em;
+		.jsconsole-prompt {
+			color: @prompt-color;
+		}
+	}
+
+	.jsconsole-cursor {
+		position: absolute;
+		display: inline-block;
+		height: 1em;
+		width: .6em;
+		opacity: 0.7;
+		background-color: @cursor-color;
+		top: 2px;
+	}
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>JSConsole Example</title>
+		<link rel="stylesheet" href="../jsconsole.css"/>
+		<style>
+			#console {
+				max-width: 600px;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="console"></div>
+
+		<script src="../jsconsole.js"></script>
+		<script>
+			var myConsole = new JSConsole('console', {});
+			myConsole.start();
+		</script>
+	</body>
+</html>

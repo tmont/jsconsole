@@ -126,6 +126,15 @@
 			this.emit('write', text);
 		},
 
+		clear: function() {
+			for (var i = 0; i < this.lines.length; i++) {
+				this.lines[i].parentNode.removeChild(this.lines[i]);
+			}
+			this.lines = [];
+
+			this.newLine();
+		},
+
 		newLine: function() {
 			var line = createElement('div', 'line');
 			if (this.prompt) {
@@ -151,11 +160,16 @@
 				self = this;
 
 			if (command && action) {
-				action.call(this, command, args, function(result) {
+				action.call(this, command, args, function(result, options) {
+					options = options || {};
 					if (result) {
 						self.write('\n' + result);
 					}
-					self.newLine();
+
+					if (!options.noNewLine) {
+						self.newLine();
+					}
+
 					self.emit('execute', command, args);
 				});
 			} else {

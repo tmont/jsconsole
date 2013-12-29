@@ -22,6 +22,10 @@
 					foo: function(command, args, callback) {
 						callback('You called foo with ' + (args ? '"' + args + '"' : 'no args') + '!');
 					},
+					clear: function(command, args, callback) {
+						this.clear();
+						callback(null, { noNewLine: true });
+					},
 					'no command': function(command, args, callback) {
 						callback(command + ': command not found');
 					}

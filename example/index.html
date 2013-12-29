@@ -16,7 +16,20 @@
 
 		<script src="../jsconsole.js"></script>
 		<script>
-			var myConsole = new JSConsole('console', {});
+			var myConsole = new JSConsole('console', {
+				prompt: 'hello@world:~ ⚡ ',
+				commands: {
+					foo: function(command, args, callback) {
+						callback('You called foo with ' + (args ? '"' + args + '"' : 'no args') + '!');
+					},
+					'no command': function(command, args, callback) {
+						callback(command + ': command not found');
+					}
+				}
+			});
+			myConsole.on('execute', function(command, args) {
+				console.log('executed command "%s" with args "%s"', command, args);
+			});
 			myConsole.start();
 		</script>
 	</body>

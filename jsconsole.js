@@ -100,6 +100,7 @@
 		this.lines = [];
 		this.prompt = null;
 		this.listeners = {};
+		this.commands = options.commands || {};
 
 		if (!('prompt' in options) || options.prompt) {
 			var prompt = createElement('span', 'prompt');
@@ -121,6 +122,8 @@
 			for (var i = 0; i < text.length; i++) {
 				this.cursor.writeChar(text.charAt(i));
 			}
+
+			this.emit('write', text);
 		},
 
 		newLine: function() {
@@ -131,6 +134,33 @@
 			line.appendChild(this.cursor.el);
 			this.container.appendChild(line);
 			this.lines.push(line);
+		},
+
+		getCurrentText: function() {
+			return [].slice.call(this.lines.slice(-1)[0].childNodes)
+				.filter(isTextNode)
+				.map(function(node) { return node.nodeValue; })
+				.join('');
+		},
+
+		execute: function() {
+			var line = this.getCurrentText(),
+				command = line.split(' ')[0],
+				args = line.substring(command.length + 1).trim(),
+				action = this.commands[command] || this.commands['no command'],
+				self = this;
+
+			if (command && action) {
+				action.call(this, command, args, function(result) {
+					if (result) {
+						self.write('\n' + result);
+					}
+					self.newLine();
+					self.emit('execute', command, args);
+				});
+			} else {
+				this.newLine();
+			}
 		},
 
 		handleKeyUp: function(e) {
@@ -155,7 +185,7 @@
 			if (e.keyCode) {
 				//a non-alphabetical character
 				switch (e.keyCode) {
-					case 13: prevent() && this.newLine(); break;
+					case 13: prevent() && this.execute(); break;
 					case 8: prevent() && this.cursor.backspace(); break;
 					case 46: prevent() && this.cursor.del(); break;
 					case 37: prevent() && this.cursor['prev' + (e.ctrlKey ? 'Word' : 'Char')](); break;

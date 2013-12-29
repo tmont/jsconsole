@@ -23,7 +23,7 @@
 			var node = this.el[verb + 'Sibling'],
 				target = null;
 			do {
-				if (!node || node.nodeType !== 3) {
+				if (!isTextNode(node)) {
 					break;
 				}
 
@@ -43,7 +43,7 @@
 
 		moveToChar: function(verb) {
 			var node = this.el[verb + 'Sibling'];
-			if (!node || node.nodeType !== 3) {
+			if (!isTextNode(node)) {
 				return;
 			}
 			if (verb === 'next') {
@@ -84,7 +84,11 @@
 	}
 
 	function removeText(node) {
-		node && node.nodeType === 3 && remove(node);
+		isTextNode(node) && remove(node);
+	}
+
+	function isTextNode(node) {
+		return node && node.nodeType === 3;
 	}
 
 	function Console(element, options) {

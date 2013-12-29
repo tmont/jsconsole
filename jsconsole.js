@@ -1,7 +1,6 @@
 (function(window, document) {
 
-	function Cursor(console) {
-		this.console = console;
+	function Cursor() {
 		this.el = createElement('span', 'cursor');
 	}
 
@@ -94,7 +93,7 @@
 	function Console(element, options) {
 		options = options || {};
 		this.el = typeof(element) === 'string' ? document.getElementById(element) : element;
-		this.cursor = new Cursor(this);
+		this.cursor = new Cursor();
 		this._stop = null;
 		this.container = null;
 		this.lines = [];

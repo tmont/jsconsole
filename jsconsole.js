@@ -139,7 +139,7 @@
 
 		clear: function() {
 			for (var i = 0; i < this.lines.length; i++) {
-				this.lines[i].parentNode.removeChild(this.lines[i]);
+				this.lines[i].el.parentNode.removeChild(this.lines[i].el);
 			}
 			this.lines = [];
 
@@ -155,11 +155,11 @@
 			commandArea.appendChild(this.cursor.el);
 			line.appendChild(commandArea);
 			this.container.appendChild(line);
-			this.lines.push(line);
+			this.lines.push({ el: line, command: commandArea });
 		},
 
 		getCurrentText: function() {
-			return [].slice.call(this.lines.slice(-1)[0].childNodes)
+			return [].slice.call(this.lines.slice(-1)[0].command.childNodes)
 				.filter(isTextNode)
 				.map(function(node) { return node.nodeValue; })
 				.join('');

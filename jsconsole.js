@@ -196,15 +196,8 @@
 			}
 		},
 
-		handleKeyUp: function(e) {
-			console.log('keyup: %d', e.keyCode);
-		},
-
-		handleKeyDown: function(e) {
-			console.log('keydown: %d', e.keyCode);
-		},
 		handleKeyPress: function(e) {
-			console.log('keypress: %d %d ctrl: %b, alt: %b, shift: %b', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey);
+			//console.log('keypress: %d %d ctrl: %b, alt: %b, shift: %b', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey);
 
 			if (e.altKey) {
 				return;
@@ -234,7 +227,8 @@
 				return;
 			}
 
-			if (e.ctrlKey && (e.charCode === 67 || e.charCode === 99)) {
+			var charCode = e.charCode;
+			if (e.ctrlKey && (charCode === 67 || charCode === 99)) {
 				//ctrl+C
 				prevent();
 				this.write('^C');
@@ -246,9 +240,9 @@
 				return;
 			}
 
-			if (e.charCode >= 32 && e.charCode <= 126) {
+			if (charCode >= 32 && charCode <= 126) {
 				prevent();
-				this.write(String.fromCharCode(e.charCode));
+				this.write(String.fromCharCode(charCode));
 			}
 		},
 

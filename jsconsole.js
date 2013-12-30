@@ -66,6 +66,14 @@
 
 		nextWord: function() {
 			this.moveToWord('next');
+		},
+
+		beginning: function() {
+			this.el.parentNode.insertBefore(this.el, this.el.parentNode.firstChild);
+		},
+
+		end: function() {
+			this.el.parentNode.insertBefore(this.el, null);
 		}
 	};
 
@@ -139,7 +147,9 @@
 			if (this.prompt) {
 				line.appendChild(this.prompt.cloneNode(true));
 			}
-			line.appendChild(this.cursor.el);
+			var commandArea = createElement('span', 'command-area');
+			commandArea.appendChild(this.cursor.el);
+			line.appendChild(commandArea);
 			this.container.appendChild(line);
 			this.lines.push(line);
 		},
@@ -203,6 +213,8 @@
 					case 46: prevent() && this.cursor.del(); break;
 					case 37: prevent() && this.cursor['prev' + (e.ctrlKey ? 'Word' : 'Char')](); break;
 					case 39: prevent() && this.cursor['next' + (e.ctrlKey ? 'Word' : 'Char')](); break;
+					case 36: prevent() && this.cursor.beginning(); break;
+					case 35: prevent() && this.cursor.end(); break;
 				}
 
 				return;

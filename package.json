@@ -10,10 +10,12 @@
 	},
 
 	"devDependencies": {
-		"serve": "*"
+		"serve": "*",
+		"uglify-js": "*"
 	},
 
 	"scripts": {
-		"start": "./node_modules/.bin/serve -p 6666 ."
+		"start": "./node_modules/.bin/serve -p 6666 .",
+		"build": "./node_modules/.bin/uglifyjs jsconsole.js -c -m --screw-ie8 --stats -v -o jsconsole.min.js"
 	}
 }

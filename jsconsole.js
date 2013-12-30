@@ -232,8 +232,12 @@
 		},
 
 		handleKeyCode: function(e) {
+			var charCode = e.charCode,
+				alt = e.altKey,
+				ctrl = e.ctrlKey;
+
 			//console.log('key: %d ctrl: %s, alt: %s, shift: %s, meta: %s', charCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
-			if (e.altKey) {
+			if (alt) {
 				return;
 			}
 
@@ -242,13 +246,12 @@
 				return true;
 			}
 
-			if (e.charCode) {
-				if (e.altKey || e.metaKey) {
+			if (charCode) {
+				if (e.metaKey) {
 					return;
 				}
 
-				var code = e.charCode;
-				if (e.ctrlKey && (code === 67 || code === 99)) {
+				if (ctrl && (charCode === 67 || charCode === 99)) {
 					//ctrl+C
 					prevent();
 					this.write('^C');
@@ -256,13 +259,13 @@
 					return;
 				}
 
-				if (e.ctrlKey) {
+				if (ctrl) {
 					return;
 				}
 
-				if (code >= 32 && code <= 126) {
+				if (charCode >= 32 && charCode <= 126) {
 					prevent();
-					this.write(String.fromCharCode(code));
+					this.write(String.fromCharCode(charCode));
 				}
 
 				return;
@@ -272,8 +275,8 @@
 				case 13: prevent() && this.execute(); return;
 				case 8: prevent() && this.cursor.backspace(); return;
 				case 46: prevent() && this.cursor.del(); return;
-				case 37: prevent() && this.cursor['prev' + (e.ctrlKey ? 'Word' : 'Char')](); return;
-				case 39: prevent() && this.cursor['next' + (e.ctrlKey ? 'Word' : 'Char')](); return;
+				case 37: prevent() && this.cursor['prev' + (ctrl ? 'Word' : 'Char')](); return;
+				case 39: prevent() && this.cursor['next' + (ctrl ? 'Word' : 'Char')](); return;
 				case 36: prevent() && this.cursor.beginning(); return;
 				case 35: prevent() && this.cursor.end(); return;
 			}

@@ -107,6 +107,7 @@
 		this.lines = [];
 		this.prompt = null;
 		this.listeners = {};
+		this.height = options.height;
 		this.commands = options.commands || {};
 
 		if (!('prompt' in options) || options.prompt) {
@@ -121,6 +122,9 @@
 	Console.prototype = {
 		render: function() {
 			this.container = createElement('div', 'container');
+			if (this.height) {
+				this.container.style.height = typeof(this.height) === 'number' ? this.height + 'px' : this.height;
+			}
 			this.newLine();
 			this.el.appendChild(this.container);
 		},

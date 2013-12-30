@@ -134,6 +134,7 @@
 				this.cursor.writeChar(text.charAt(i));
 			}
 
+			this.scrollToCursor();
 			this.emit('write', text);
 		},
 
@@ -146,6 +147,10 @@
 			this.newLine();
 		},
 
+		scrollToCursor: function() {
+			this.container.scrollTop = this.container.scrollHeight;
+		},
+
 		newLine: function() {
 			var line = createElement('div', 'line');
 			if (this.prompt) {
@@ -156,6 +161,7 @@
 			line.appendChild(commandArea);
 			this.container.appendChild(line);
 			this.lines.push({ el: line, command: commandArea });
+			this.scrollToCursor();
 		},
 
 		getCurrentText: function() {

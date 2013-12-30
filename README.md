@@ -2,8 +2,8 @@
 
 This is a little script that will make a console-type
 terminal-ish thing in your browser. It requires nothing
-except the DOM. It probably works on IE9. It definitely
-works on Firefox and ~~Chrome~~ (dammit chrome).
+except the DOM. It probably kind of works on IE9+. It definitely
+works on Firefox and Chrome.
 
 ## Usage
 

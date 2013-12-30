@@ -196,9 +196,43 @@
 			}
 		},
 
-		handleKeyPress: function(e) {
-			//console.log('keypress: %d %d ctrl: %b, alt: %b, shift: %b', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey);
+		handleKeyUp: function(e) {
+			//console.log('keyup: char: %d, key: %d, ctrl: %s, alt: %s, shift: %s, meta: %s', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
+			var code = e.keyCode;
+			//have to manually do this cuz chrome is garbage
+			var codes = {
+				8: 1, //backspace
+				13: 1, //enter
+				//27: 1, //escape
+				//33: 1, //page up
+				//34: 1, //page down
+				35: 1, //end
+				36: 1, //home
+				37: 1, //left
+				//38: 1, //up
+				39: 1, //right
+				//40: 1, //down
+				46: 1  //delete
+			};
 
+			if (!codes[code]) {
+				return;
+			}
+
+			this.handleKeyCode(e);
+		},
+
+		handleKeyPress: function(e) {
+			//console.log('keypress: char: %d, key: %d, ctrl: %s, alt: %s, shift: %s, meta: %s', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
+			if (!e.charCode) {
+				//let keyup handle it
+				return;
+			}
+			this.handleKeyCode(e);
+		},
+
+		handleKeyCode: function(e) {
+			//console.log('key: %d ctrl: %s, alt: %s, shift: %s, meta: %s', charCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
 			if (e.altKey) {
 				return;
 			}
@@ -208,52 +242,54 @@
 				return true;
 			}
 
-			if (e.keyCode) {
-				//a non-alphabetical character
-				switch (e.keyCode) {
-					case 13: prevent() && this.execute(); break;
-					case 8: prevent() && this.cursor.backspace(); break;
-					case 46: prevent() && this.cursor.del(); break;
-					case 37: prevent() && this.cursor['prev' + (e.ctrlKey ? 'Word' : 'Char')](); break;
-					case 39: prevent() && this.cursor['next' + (e.ctrlKey ? 'Word' : 'Char')](); break;
-					case 36: prevent() && this.cursor.beginning(); break;
-					case 35: prevent() && this.cursor.end(); break;
+			if (e.charCode) {
+				if (e.altKey || e.metaKey) {
+					return;
+				}
+
+				var code = e.charCode;
+				if (e.ctrlKey && (code === 67 || code === 99)) {
+					//ctrl+C
+					prevent();
+					this.write('^C');
+					this.newLine();
+					return;
+				}
+
+				if (e.ctrlKey) {
+					return;
+				}
+
+				if (code >= 32 && code <= 126) {
+					prevent();
+					this.write(String.fromCharCode(code));
 				}
 
 				return;
 			}
 
-			if (e.altKey || e.metaKey) {
-				return;
-			}
-
-			var charCode = e.charCode;
-			if (e.ctrlKey && (charCode === 67 || charCode === 99)) {
-				//ctrl+C
-				prevent();
-				this.write('^C');
-				this.newLine();
-				return;
-			}
-
-			if (e.ctrlKey) {
-				return;
-			}
-
-			if (charCode >= 32 && charCode <= 126) {
-				prevent();
-				this.write(String.fromCharCode(charCode));
+			switch (e.keyCode) {
+				case 13: prevent() && this.execute(); return;
+				case 8: prevent() && this.cursor.backspace(); return;
+				case 46: prevent() && this.cursor.del(); return;
+				case 37: prevent() && this.cursor['prev' + (e.ctrlKey ? 'Word' : 'Char')](); return;
+				case 39: prevent() && this.cursor['next' + (e.ctrlKey ? 'Word' : 'Char')](); return;
+				case 36: prevent() && this.cursor.beginning(); return;
+				case 35: prevent() && this.cursor.end(); return;
 			}
 		},
 
 		start: function(scope) {
 			scope = scope || document;
-			var press = this.handleKeyPress.bind(this);
+			var press = this.handleKeyPress.bind(this),
+				up = this.handleKeyUp.bind(this);
 
 			scope.addEventListener('keypress', press, false);
+			scope.addEventListener('keyup', up, false);
 
 			this._stop = function() {
 				scope.removeEventListener('keypress', press, false);
+				scope.removeEventListener('keyup', up, false);
 			};
 		},
 

@@ -197,7 +197,7 @@
 		},
 
 		handleKeyUp: function(e) {
-			//console.log('keyup: char: %d, key: %d, ctrl: %s, alt: %s, shift: %s, meta: %s', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
+//			console.log('keyup: char: %d, key: %d, ctrl: %s, alt: %s, shift: %s, meta: %s', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
 			var code = e.keyCode;
 			//have to manually do this cuz chrome is garbage
 			var codes = {
@@ -223,11 +223,23 @@
 		},
 
 		handleKeyPress: function(e) {
-			//console.log('keypress: char: %d, key: %d, ctrl: %s, alt: %s, shift: %s, meta: %s', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
+//			console.log('keypress: char: %d, key: %d, ctrl: %s, alt: %s, shift: %s, meta: %s', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
+
+			var keys = {
+				8: 1
+			};
+
+			if (keys[e.keyCode]) {
+				//prevent firefox from doing the default
+				e.preventDefault();
+				return;
+			}
+
 			if (!e.charCode) {
 				//let keyup handle it
 				return;
 			}
+
 			this.handleKeyCode(e);
 		},
 

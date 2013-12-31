@@ -1,12 +1,20 @@
 (function(window, document) {
 
+	var prefix = 'jsconsole-';
+
 	function Cursor() {
 		this.el = createElement('span', 'cursor');
 	}
 
 	Cursor.prototype = {
-		writeChar: function(c) {
-			var node = document.createTextNode(c);
+		writeChar: function(c, color) {
+			var node;
+			if (color) {
+				node = createElement('span', 'char');
+				node.style.color = color;
+			}
+			var text = document.createTextNode(c);
+			node ? node.appendChild(text) : (node = text);
 			this.el.parentNode.insertBefore(node, this.el);
 		},
 
@@ -80,7 +88,7 @@
 	function createElement(tag, cls) {
 		var el = document.createElement(tag);
 		if (cls) {
-			el.className = 'jsconsole-' + cls;
+			el.className = prefix + cls;
 		}
 
 		return el;
@@ -95,7 +103,7 @@
 	}
 
 	function isTextNode(node) {
-		return node && node.nodeType === 3;
+		return node && (node.nodeType === 3 || node.className === prefix + 'char');
 	}
 
 	function Console(element, options) {
@@ -109,6 +117,7 @@
 		this.listeners = {};
 		this.commands = options.commands || {};
 		this.fullScreen = !!options.fullScreen;
+		this.transform = options.transform;
 
 		if (!('prompt' in options) || options.prompt) {
 			var prompt = createElement('span', 'prompt');
@@ -129,13 +138,19 @@
 			this.el.appendChild(this.container);
 		},
 
-		write: function(text) {
+		write: function(text, color) {
+			if (this.transform) {
+				var transformed = this.transform(text, color);
+				text = transformed.text;
+				color = transformed.color;
+			}
+
 			for (var i = 0; i < text.length; i++) {
-				this.cursor.writeChar(text.charAt(i));
+				this.cursor.writeChar(text.charAt(i), color);
 			}
 
 			this.scrollToCursor();
-			this.emit('write', text);
+			this.emit('write', text, color);
 		},
 
 		clear: function() {
@@ -149,7 +164,7 @@
 
 		toggleFullScreen: function(fullScreen) {
 			var cls = this.container.className,
-				name = 'jsconsole-fullscreen',
+				name = prefix + 'fullscreen',
 				regex = new RegExp('\\b' + name + '\\b');
 
 			if (typeof(fullScreen) !== 'undefined') {
@@ -179,7 +194,9 @@
 		getCurrentText: function() {
 			return [].slice.call(this.lines.slice(-1)[0].command.childNodes)
 				.filter(isTextNode)
-				.map(function(node) { return node.nodeValue; })
+				.map(function(node) {
+					return node.nodeType === 3 ? node.nodeValue : node.firstChild.nodeValue;
+				})
 				.join('');
 		},
 

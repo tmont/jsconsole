@@ -16,10 +16,32 @@
 
 		<script src="../jsconsole.js"></script>
 		<script>
+
 			var myConsole = new JSConsole('console', {
 				fullScreen: true,
 				prompt: 'hello@world:~ ⚡ ',
+				transform: function(text, color) {
+					if (color || !this._colorize) {
+						return {
+							text: text,
+							color: color
+						};
+					}
+
+					color = this._color || 'rgb(' +
+						Math.round(100 + Math.random() * 156) + ',' +
+						Math.round(100 + Math.random() * 156) + ',' +
+						Math.round(100 + Math.random() * 156) +
+					')';
+
+					return { text: text, color: color };
+				},
 				commands: {
+					colorize: function(command, args, callback) {
+						this._color = args.split(' ')[0];
+						this._colorize = args ? true : !this._colorize;
+						callback('Console has been ' + (this._colorize ? '' : 'un-') + 'colorized!');
+					},
 					foo: function(command, args, callback) {
 						callback('You called foo with ' + (args ? '"' + args + '"' : 'no args') + '!');
 					},

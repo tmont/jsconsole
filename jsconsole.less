@@ -1,23 +1,18 @@
-@import "lesshat";
-
-@opera: false;
-@ms: false;
-
 .jsconsole-container {
 	@font-size: 16px;
 	@line-height: 1.5em;
 	@cursor-color: #80cd7c;
 	@prompt-color: #909ccd;
-	@console-bg-color: #161616;
-	@console-fg-color: ivory;
+	@console-bg-color: #242424;
+	@console-fg-color: #ddddd4;
+	@gradient-start: lighten(fade(@console-bg-color, 90), 5%);
+	@gradient-stop: darken(fade(@console-bg-color, 90), 10%);
 
 	line-height: @line-height;
 	font-family: Consolas, monospace;
-	.background-image(linear-gradient(
-		to bottom,
-		lighten(fade(@console-bg-color, 90), 10%),
-		darken(fade(@console-bg-color, 90), 10%))
-	);
+	background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-stop);
+	background-image: -moz-linear-gradient(top, @gradient-start, @gradient-stop);
+	background-image: linear-gradient(to bottom, @gradient-start, @gradient-stop);
 	color: @console-fg-color;
 	font-size: @font-size;
 	width: 100%;

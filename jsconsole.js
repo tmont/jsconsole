@@ -107,8 +107,8 @@
 		this.lines = [];
 		this.prompt = null;
 		this.listeners = {};
-		this.height = options.height;
 		this.commands = options.commands || {};
+		this.fullScreen = !!options.fullScreen;
 
 		if (!('prompt' in options) || options.prompt) {
 			var prompt = createElement('span', 'prompt');
@@ -122,8 +122,8 @@
 	Console.prototype = {
 		render: function() {
 			this.container = createElement('div', 'container');
-			if (this.height) {
-				this.container.style.height = typeof(this.height) === 'number' ? this.height + 'px' : this.height;
+			if (this.fullScreen) {
+				this.toggleFullScreen(true);
 			}
 			this.newLine();
 			this.el.appendChild(this.container);
@@ -145,6 +145,18 @@
 			this.lines = [];
 
 			this.newLine();
+		},
+
+		toggleFullScreen: function(fullScreen) {
+			var cls = this.container.className,
+				name = 'jsconsole-fullscreen',
+				regex = new RegExp('\\b' + name + '\\b');
+
+			if (typeof(fullScreen) !== 'undefined') {
+				this.container.className = fullScreen ? cls += ' ' + name : cls.replace(regex, '');
+			} else {
+				this.container.className = !regex.test(cls) ? cls += ' ' + name : cls.replace(regex, '');
+			}
 		},
 
 		scrollToCursor: function() {
@@ -197,7 +209,6 @@
 		},
 
 		handleKeyUp: function(e) {
-//			console.log('keyup: char: %d, key: %d, ctrl: %s, alt: %s, shift: %s, meta: %s', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
 			var code = e.keyCode;
 			//have to manually do this cuz chrome is garbage
 			var codes = {
@@ -223,8 +234,6 @@
 		},
 
 		handleKeyPress: function(e) {
-//			console.log('keypress: char: %d, key: %d, ctrl: %s, alt: %s, shift: %s, meta: %s', e.charCode, e.keyCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
-
 			var keys = {
 				8: 1
 			};

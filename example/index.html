@@ -17,6 +17,7 @@
 		<script src="../jsconsole.js"></script>
 		<script>
 			var myConsole = new JSConsole('console', {
+				fullScreen: true,
 				prompt: 'hello@world:~ ⚡ ',
 				commands: {
 					foo: function(command, args, callback) {
@@ -25,6 +26,10 @@
 					clear: function(command, args, callback) {
 						this.clear();
 						callback(null, { noNewLine: true });
+					},
+					fullscreen: function(command, args, callback) {
+						this.toggleFullScreen();
+						callback();
 					},
 					'no command': function(command, args, callback) {
 						callback(command + ': command not found');

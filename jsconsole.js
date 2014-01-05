@@ -7,14 +7,23 @@
 	}
 
 	Cursor.prototype = {
-		writeChar: function(c, color) {
+		write: function(text, color) {
 			var node;
-			if (color) {
-				node = createElement('span', 'char');
-				node.style.color = color;
+			if (text instanceof HTMLElement) {
+				node = text;
+			} else {
+				if (color) {
+					node = createElement('span', 'char');
+					node.style.color = color;
+				}
+				var textNode = document.createTextNode(text);
+				if (node) {
+					node.appendChild(textNode);
+				} else {
+					node = textNode;
+				}
 			}
-			var text = document.createTextNode(c);
-			node ? node.appendChild(text) : (node = text);
+
 			this.el.parentNode.insertBefore(node, this.el);
 		},
 
@@ -172,8 +181,12 @@
 				color = transformed.color;
 			}
 
+			if (typeof(text) === 'string') {
+				text = text.split('');
+			}
+
 			for (var i = 0; i < text.length; i++) {
-				this.cursor.writeChar(text.charAt(i), color);
+				this.cursor.write(text[i], color);
 			}
 
 			this.scrollToCursor();
@@ -242,7 +255,8 @@
 				action.call(this, function(result, options) {
 					options = options || {};
 					if (result) {
-						self.write('\n' + result);
+						self.write('\n');
+						self.write(result);
 					}
 
 					if (!options.noNewLine) {

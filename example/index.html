@@ -56,6 +56,12 @@
 						this.setBanner(args);
 						callback(null, { noNewLine: true });
 					},
+					html: function(callback, args) {
+						var parent = document.createElement('div');
+						parent.innerHTML = args;
+						var nodes = [].slice.call(parent.childNodes);
+						callback(nodes);
+					},
 					'no command': function(callback, args, command) {
 						callback(command + ': command not found');
 					}

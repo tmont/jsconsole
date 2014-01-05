@@ -115,9 +115,10 @@
 		this.lines = [];
 		this.prompt = null;
 		this.listeners = {};
-		this.commands = options.commands || {};
+		this.setCommands(options.commands);
 		this.fullScreen = !!options.fullScreen;
 		this.transform = options.transform;
+		this.inPlace = !!options.inPlace;
 
 		if (!('prompt' in options) || options.prompt) {
 			var prompt = createElement('span', 'prompt');
@@ -130,12 +131,32 @@
 
 	Console.prototype = {
 		render: function() {
-			this.container = createElement('div', 'container');
+			var containerClass = 'container';
+			if (this.inPlace) {
+				this.container = this.el;
+				this.container.className += ' ' + prefix + containerClass;
+			} else {
+				this.container = createElement('div', containerClass);
+			}
 			if (this.fullScreen) {
 				this.toggleFullScreen(true);
 			}
 			this.newLine();
-			this.el.appendChild(this.container);
+			if (!this.inPlace) {
+				this.el.appendChild(this.container);
+			}
+		},
+
+		setCommands: function(commands) {
+			this.commands = commands || {};
+		},
+
+		setCommand: function(name, thunk) {
+			this.commands[name] = thunk;
+		},
+
+		removeCommand: function(name) {
+			delete this.commands[name];
 		},
 
 		write: function(text, color) {
@@ -208,7 +229,7 @@
 				self = this;
 
 			if (command && action) {
-				action.call(this, command, args, function(result, options) {
+				action.call(this, function(result, options) {
 					options = options || {};
 					if (result) {
 						self.write('\n' + result);
@@ -218,8 +239,8 @@
 						self.newLine();
 					}
 
-					self.emit('execute', command, args);
-				});
+					self.emit('execute', args, command);
+				}, args, command);
 			} else {
 				this.newLine();
 			}
@@ -274,7 +295,6 @@
 				alt = e.altKey,
 				ctrl = e.ctrlKey;
 
-			//console.log('key: %d ctrl: %s, alt: %s, shift: %s, meta: %s', charCode, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey);
 			if (alt) {
 				return;
 			}

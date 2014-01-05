@@ -16,7 +16,6 @@
 
 		<script src="../jsconsole.js"></script>
 		<script>
-
 			var myConsole = new JSConsole('console', {
 				fullScreen: true,
 				prompt: 'hello@world:~ ⚡ ',
@@ -37,23 +36,23 @@
 					return { text: text, color: color };
 				},
 				commands: {
-					colorize: function(command, args, callback) {
+					colorize: function(callback, args) {
 						this._color = args.split(' ')[0];
 						this._colorize = args ? true : !this._colorize;
 						callback('Console has been ' + (this._colorize ? '' : 'un-') + 'colorized!');
 					},
-					foo: function(command, args, callback) {
+					foo: function(callback, args) {
 						callback('You called foo with ' + (args ? '"' + args + '"' : 'no args') + '!');
 					},
-					clear: function(command, args, callback) {
+					clear: function(callback) {
 						this.clear();
 						callback(null, { noNewLine: true });
 					},
-					fullscreen: function(command, args, callback) {
+					fullscreen: function(callback) {
 						this.toggleFullScreen();
 						callback();
 					},
-					'no command': function(command, args, callback) {
+					'no command': function(callback, args, command) {
 						callback(command + ': command not found');
 					}
 				}

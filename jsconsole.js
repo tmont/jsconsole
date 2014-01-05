@@ -115,10 +115,10 @@
 		this.lines = [];
 		this.prompt = null;
 		this.listeners = {};
-		this.setCommands(options.commands);
 		this.fullScreen = !!options.fullScreen;
 		this.transform = options.transform;
 		this.inPlace = !!options.inPlace;
+		this.setCommands(options.commands);
 
 		if (!('prompt' in options) || options.prompt) {
 			var prompt = createElement('span', 'prompt');
@@ -145,6 +145,12 @@
 			if (!this.inPlace) {
 				this.el.appendChild(this.container);
 			}
+		},
+
+		setBanner: function(text) {
+			this.clear({ noPrompt: true });
+			this.write(text);
+			this.newLine();
 		},
 
 		setCommands: function(commands) {
@@ -174,13 +180,16 @@
 			this.emit('write', text, color);
 		},
 
-		clear: function() {
+		clear: function(options) {
+			options = options || {};
 			for (var i = 0; i < this.lines.length; i++) {
 				this.lines[i].el.parentNode.removeChild(this.lines[i].el);
 			}
 			this.lines = [];
 
-			this.newLine();
+			if (!options.noNewLine) {
+				this.newLine(options);
+			}
 		},
 
 		toggleFullScreen: function(fullScreen) {
@@ -199,9 +208,10 @@
 			this.container.scrollTop = this.container.scrollHeight;
 		},
 
-		newLine: function() {
+		newLine: function(options) {
+			options = options || {};
 			var line = createElement('div', 'line');
-			if (this.prompt) {
+			if (this.prompt && !options.noPrompt) {
 				line.appendChild(this.prompt.cloneNode(true));
 			}
 			var commandArea = createElement('span', 'command-area');

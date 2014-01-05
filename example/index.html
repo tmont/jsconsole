@@ -52,15 +52,20 @@
 						this.toggleFullScreen();
 						callback();
 					},
+					banner: function(callback, args) {
+						this.setBanner(args);
+						callback(null, { noNewLine: true });
+					},
 					'no command': function(callback, args, command) {
 						callback(command + ': command not found');
 					}
 				}
 			});
-			myConsole.on('execute', function(command, args) {
+			myConsole.on('execute', function(args, command) {
 				console.log('executed command "%s" with args "%s"', command, args);
 			});
 			myConsole.start();
+			myConsole.setBanner('Welcome to JSConsole! Try typing some stuff.\n\n');
 		</script>
 	</body>
 </html>

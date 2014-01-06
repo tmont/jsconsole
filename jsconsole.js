@@ -271,7 +271,11 @@
 				action = this.commands[command] || this.commands['no command'],
 				self = this;
 
-			if (command && action) {
+			if (!command) {
+				action = this.commands['empty command'];
+			}
+
+			if (action) {
 				action.call(this, function(result, options) {
 					options = options || {};
 					if (result) {

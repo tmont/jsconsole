@@ -228,15 +228,35 @@
 				line.appendChild(this.prompt.cloneNode(true));
 			}
 			var commandArea = createElement('span', 'command-area');
-			commandArea.appendChild(this.cursor.el);
 			line.appendChild(commandArea);
 			this.container.appendChild(line);
-			this.lines.push({ el: line, command: commandArea });
+			this.lines.push({
+				el: line,
+				command: {
+					el: commandArea,
+					contexts: []
+				}
+			});
+			this.newCommandContext();
+		},
+
+		newCommandContext: function() {
+			var ctx = createElement('span', 'command-context'),
+				line = this.lines.slice(-1)[0];
+			ctx.appendChild(this.cursor.el);
+			line.command.el.appendChild(ctx);
+			line.command.contexts.push(ctx);
 			this.scrollToCursor();
 		},
 
 		getCurrentText: function() {
-			return [].slice.call(this.lines.slice(-1)[0].command.childNodes)
+			var nodes = this.lines.slice(-1)[0]
+				.command
+				.contexts
+				.slice(-1)[0]
+				.childNodes;
+
+			return [].slice.call(nodes)
 				.filter(isTextNode)
 				.map(function(node) {
 					return node.nodeType === 3 ? node.nodeValue : node.firstChild.nodeValue;
@@ -264,7 +284,7 @@
 					}
 
 					self.emit('execute', args, command);
-				}, args, command);
+				}, args, command, line);
 			} else {
 				this.newLine();
 			}

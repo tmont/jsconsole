@@ -56,6 +56,24 @@
 						this.setBanner(args);
 						callback(null, { noNewLine: true });
 					},
+					read: function(callback, args) {
+						this.newLine({ noPrompt: true });
+						var commands = this.commands;
+						this.setCommands({
+							'no command': function(callback, args, command, line) {
+								this.setCommands(commands);
+								var answer = document.createElement('span');
+								answer.style.color = 'lime';
+								answer.style.fontWeight = 'bold';
+								answer.style.textDecoration = 'underline';
+								answer.appendChild(document.createTextNode(line));
+								callback([ 'Your answer was ', answer ]);
+							}
+						});
+
+						this.write(args + ' ');
+						this.newCommandContext();
+					},
 					html: function(callback, args) {
 						var parent = document.createElement('div');
 						parent.innerHTML = args;

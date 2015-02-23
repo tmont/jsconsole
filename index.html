@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>JSConsole Example</title>
+		<link rel="stylesheet" href="./jsconsole.css"/>
+		<style>
+			#console {
+				max-width: 600px;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="console"></div>
+
+		<script src="./jsconsole.js"></script>
+		<script id="example-code">
+			var myConsole = new JSConsole('console', {
+				fullScreen: true,
+				prompt: 'hello@world:~ ',
+				transform: function(text, color) {
+					if (color || !this._colorize) {
+						return {
+							text: text,
+							color: color
+						};
+					}
+
+					color = this._color || 'rgb(' +
+						Math.round(100 + Math.random() * 156) + ',' +
+						Math.round(100 + Math.random() * 156) + ',' +
+						Math.round(100 + Math.random() * 156) +
+					')';
+
+					return { text: text, color: color };
+				},
+				commands: {
+					'show-code': function(callback, args) {
+						var text = document.getElementById('example-code').innerHTML.replace(/^\t{3}/mg, '');
+						var span = document.createElement('span');
+						span.style.color = 'yellow';
+						span.style.fontSize = '12px';
+						span.appendChild(document.createTextNode(text));
+						callback([ span ]);
+					},
+					colorize: function(callback, args) {
+						this._color = args.split(' ')[0];
+						this._colorize = args ? true : !this._colorize;
+						callback('Console has been ' + (this._colorize ? '' : 'un-') + 'colorized!');
+					},
+					foo: function(callback, args) {
+						callback('You called foo with ' + (args ? '"' + args + '"' : 'no args') + '!');
+					},
+					clear: function(callback) {
+						this.clear();
+						callback(null, { noNewLine: true });
+					},
+					fullscreen: function(callback) {
+						this.toggleFullScreen();
+						callback();
+					},
+					banner: function(callback, args) {
+						this.setBanner(args);
+						callback(null, { noNewLine: true });
+					},
+					read: function(callback, args) {
+						this.newLine({ noPrompt: true });
+						var commands = this.commands;
+						this.setCommands({
+							'no command': function(callback, args, command, line) {
+								this.setCommands(commands);
+								var answer = document.createElement('span');
+								answer.style.color = 'lime';
+								answer.style.fontWeight = 'bold';
+								answer.style.textDecoration = 'underline';
+								answer.appendChild(document.createTextNode(line));
+								callback([ 'Your answer was ', answer ]);
+							}
+						});
+
+						this.write(args + ' ');
+						this.newCommandContext();
+					},
+					html: function(callback, args) {
+						var parent = document.createElement('div');
+						parent.innerHTML = args;
+						var nodes = [].slice.call(parent.childNodes);
+						callback(nodes);
+					},
+					'no command': function(callback, args, command) {
+						callback(command + ': command not found');
+					}
+				}
+			});
+			myConsole.on('execute', function(args, command) {
+				console.log('executed command "%s" with args "%s"', command, args);
+			});
+			myConsole.start();
+			myConsole.setBanner('Welcome to JSConsole! Try typing "foo", "show-code", "fullscreen", "colorize" or "read".\n\n');
+		</script>
+	</body>
+</html>

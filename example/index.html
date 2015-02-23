@@ -15,10 +15,10 @@
 		<div id="console"></div>
 
 		<script src="../jsconsole.js"></script>
-		<script>
+		<script id="example-code">
 			var myConsole = new JSConsole('console', {
 				fullScreen: true,
-				prompt: 'hello@world:~ ⚡ ',
+				prompt: 'hello@world:~ ',
 				transform: function(text, color) {
 					if (color || !this._colorize) {
 						return {
@@ -36,6 +36,14 @@
 					return { text: text, color: color };
 				},
 				commands: {
+					'show-code': function(callback, args) {
+						var text = document.getElementById('example-code').innerHTML.replace(/^\t{3}/mg, '');
+						var span = document.createElement('span');
+						span.style.color = 'yellow';
+						span.style.fontSize = '12px';
+						span.appendChild(document.createTextNode(text));
+						callback([ span ]);
+					},
 					colorize: function(callback, args) {
 						this._color = args.split(' ')[0];
 						this._colorize = args ? true : !this._colorize;
@@ -89,7 +97,7 @@
 				console.log('executed command "%s" with args "%s"', command, args);
 			});
 			myConsole.start();
-			myConsole.setBanner('Welcome to JSConsole! Try typing some stuff.\n\n');
+			myConsole.setBanner('Welcome to JSConsole! Try typing "foo", "show-code", "fullscreen", "colorize" or "read".\n\n');
 		</script>
 	</body>
 </html>
